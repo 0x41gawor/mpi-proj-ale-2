@@ -1,0 +1,27 @@
+option solver '..\..\Ampl\cplex.exe';
+
+option presolve_eps 0.00001;
+
+### Setting controls
+
+option display_precision 8;
+
+
+### Reading model
+
+printf '\n==============================\n';
+printf 'Reading model ...\n\n';
+
+model 'mpi.mod';
+
+### Reading data
+
+printf '\n==============================\n';
+printf 'Reading data ...\n\n';
+
+data 'mpi.dat';
+
+
+display Nodes, node_cpu, node_ram;
+display ContainerImages, containerImage_cpu, containerImage_ram, containerImage_sau;
+display InterestMatrix, service_SAU;

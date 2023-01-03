@@ -1,0 +1,21 @@
+param nodeCount := 4;
+param servicesCount := 3;
+
+param: Nodes: node_cpu node_ram :=
+1 8 64
+2 4 64
+3 16 128
+4 8 32
+;
+
+param: ContainerImages: containerImage_cpu containerImage_ram containerImage_sau :=
+1 2 6 8
+2 1 8 10
+3 2 16 15
+;
+
+param: InterestMatrix: service_SAU :=
+1 15
+2 88
+3 34
+;

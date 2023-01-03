@@ -1,2 +1,2 @@
-"..\..\Ampl\ampl.exe" ddap.run
+"..\..\Ampl\ampl.exe" mpi.run
 pause

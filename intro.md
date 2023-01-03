@@ -45,7 +45,7 @@ FTP-deamon extra instance  : 10kSAU 2GBRAM, 6CPU
 wylicza ile potrzeba instancji kontenerów, żeby zaspokoić chwilowe zainteresowanie na daną usługę następnie tworzy pod'y w odpowiedniej ilość i rozmieszcza je na węzłach
 Funkcją celu tego rozmieszczania jest minimalizacja takiej zmiennej:
 mean - średnie procentowe wykorzystanie node'ów
-var x = Math.Min(Zbiór{dla każdego węzła `i` : |mean - obiążenie(i)|}).
+var x = Math.Max(Zbiór{dla każdego węzła `i` : |mean - obiążenie(i)|}).
 
 #### Output
 
@@ -131,7 +131,7 @@ Wymyślamy takie zapotrzebowanie, żeby w 50% pokryć centrum danych czyli max C
 Macierz zainteresowań
 
 ```go
-AllocationtMatrix{
+InterestMatrix{
     1:      15     // netflix  2  4cpu 12ram
     2:      88     // facebook 9  9cpu 72ram
     3:      34     // allegro  3  6cpu 48ram 
@@ -154,10 +154,25 @@ ContainerCount[ {1, 2}, {2, 9}, {3, 3}]
 
 ```go
 AllocationtMatrix{
-    Node 1: {1, }, {2,3} {3, 1}  // wyk: 5cpu 48ram      limit: 8cpu 64ram       62.5%cpu, 75%ram 
+    Node 1: {1, }, {2,3} {3, 1}  // wyk: 5cpu 48ram      limit: 8cpu 64ram       62.5%cpu, 75%ram overall 69%
     Node 2: {1, 1}, {2, } {3, }  //  wyk: 2cpu, 6ram      limit: 4cpu, 64ram     50%cpu
     Node 3: {1, }, {2, 4} {3, 2} // wyk: 8cpu, 64ram      limit: 16cpu, 128ram   50%
-    Node 4: {1, 1}, {2,2} {3, }  // wyk: 4cpu, 22ram       limit: 8cpu, 32ram    50%cpu, 69%ram
+    Node 4: {1, 1}, {2,2} {3, }  // wyk: 4cpu, 22ram       limit: 8cpu, 32ram    50%cpu, 69%ram overall 60%
 }
+```
+
+## AMPL
+
+Konstrainty
+
+- nie możemy na węzłach przekroczyć RAM i CPU
+- musimy położyć tyle instancji kontenerów, żeby pokryć zapotrzebowanie
+
+Optymalizacja
+
+Funkcją celu tego jest minimalizacja takiej zmiennej:
+```go
+mean - średnie procentowe wykorzystanie node'ów
+var x = Math.Max(Zbiór{dla każdego węzła `i` : |mean - obiążenie(i)|}).
 ```
 
