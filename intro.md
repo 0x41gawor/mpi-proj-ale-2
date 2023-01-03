@@ -76,10 +76,11 @@ type Node struct {
 
 ```go
 type ContainerImage struct {
+    Id          Int 
 	ServiceId   Int //wiadomka
     CPU         Int // ile jedna instancja zajmuje procków [liczba procków]
     RAM         Int // ile jedna instancja zajmuje RAM [GB]
-    SAU         Int // ile jedna instacja jest w stanie obsłużyć SAU
+    SAU         Int // [kSAU] ile jedna instacja jest w stanie obsłużyć SAU
 }
 ```
 
@@ -104,3 +105,59 @@ type AllocationtMatrix struct {
 ### Przykład
 
 //TODO Wymyśl przykład, opisz słownie, potem zasymuluj algorytm i to wszystko zrzuytuj na model.
+
+**INPUT**
+
+Mamy centrum danych i w nim 4 węzły.
+
+```go
+Nodes[ Node{1, 8, 64}, Node{2, 4, 64}, Node{3, 16, 128}, Node{4, 8, 32} ]
+```
+
+No i centrum danych oferuje 3 usługi (Netflix, Facebook, Allegro).
+
+Obrazy kontenerów dla usług.
+
+```go
+ContainerImages[ ContainerImage{1, 1, 2, 6, 8}, ContainerImage{2, 2, 1, 8, 10},  ContainerImages{3, 3, 2, 16, 15}]
+```
+
+Macierz zainteresowań
+
+Łączne zasoby centrum danych to {CPU=36, RAM=288}
+
+Wymyślamy takie zapotrzebowanie, żeby w 50% pokryć centrum danych czyli max CPU=18, RAM=144.
+
+Macierz zainteresowań
+
+```go
+AllocationtMatrix{
+    1:      15     // netflix  2  4cpu 12ram
+    2:      88     // facebook 9  9cpu 72ram
+    3:      34     // allegro  3  6cpu 48ram 
+}
+```
+
+**OUTPUT**
+
+```go
+Nodes[ Node{1, 8, 64}, Node{2, 4, 64}, Node{3, 16, 128}, Node{4, 8, 32} ]
+```
+
+```go
+ContainerImages[ ContainerImage{1, 1, 2, 6, 8}, ContainerImage{2, 2, 1, 8, 10},  ContainerImages{3, 3, 2, 16, 15}]
+```
+
+```go
+ContainerCount[ {1, 2}, {2, 9}, {3, 3}]
+```
+
+```go
+AllocationtMatrix{
+    Node 1: {1, }, {2,3} {3, 1}  // wyk: 5cpu 48ram      limit: 8cpu 64ram       62.5%cpu, 75%ram 
+    Node 2: {1, 1}, {2, } {3, }  //  wyk: 2cpu, 6ram      limit: 4cpu, 64ram     50%cpu
+    Node 3: {1, }, {2, 4} {3, 2} // wyk: 8cpu, 64ram      limit: 16cpu, 128ram   50%
+    Node 4: {1, 1}, {2,2} {3, }  // wyk: 4cpu, 22ram       limit: 8cpu, 32ram    50%cpu, 69%ram
+}
+```
+
