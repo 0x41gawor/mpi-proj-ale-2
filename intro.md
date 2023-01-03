@@ -177,3 +177,10 @@ mean - średnie procentowe wykorzystanie node'ów
 var x = Math.Max(Zbiór{dla każdego węzła `i` : |mean - obiążenie(i)|}).
 ```
 
+## Analiza problemu
+
+https://en.wikipedia.org/wiki/Assignment_problem
+
+https://en.wikipedia.org/wiki/Generalized_assignment_problem
+
+Slajdy Bębena 24-27.
