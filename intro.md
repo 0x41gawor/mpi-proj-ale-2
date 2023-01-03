@@ -162,6 +162,18 @@ AllocationtMatrix{
 }
 ```
 
+```go
+AllocationtMatrix{
+    																					                 
+    Node 1: {1, }, {2, } {3, 3}  // wyk: 6cpu, 48ram      limit: 8cpu 64ram       
+    Node 2: {1, }, {2, } {3, }  //  wyk:       limit: 4cpu, 64ram     
+    Node 3: {1, }, {2,9} {3, } // wyk: 9cpu, 72ram      limit: 16cpu, 128ram   
+    Node 4: {1,2}, {2, } {3, }  // wyk: 4cpu, 12ram       limit: 8cpu, 32ram     
+}
+```
+
+
+
 ## AMPL
 
 **Konstrainty**

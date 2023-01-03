@@ -25,3 +25,15 @@ data 'mpi.dat';
 display Nodes, node_cpu, node_ram;
 display ContainerImages, containerImage_cpu, containerImage_ram, containerImage_sau;
 display InterestMatrix, service_SAU;
+
+### Solving problem
+
+printf '\n==============================\n';
+printf 'Solving the problem ...\n\n';
+
+solve gap;
+
+display AllocationMatrix;
+
+printf '\n==============================\n';
+printf 'Solving completed.\n\n';
