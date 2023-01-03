@@ -43,7 +43,9 @@ var z, integer; # link overload                                                 
 subject to demand_satisfaction_constraint { d in Demands }:			# dla zmiennej dp w przedziale od 1 do liczby pathów danego demanda, suma x(d,dp) ma być równa volume tego demanda
   sum { dp in 1..demand_maxPath[ d] } demandPath_signalCount[ d, dp ] = demand_volume[ d ];
   
-subject to link_signalCount_constraint { l in Links }:				# do zmiennej l(e,x) przypisane jest suma po demandach `d`, po jego pathah `dp` to z tym k to jest chyba zapis ze dany link należy do danej ścieżki dp, jeśli 										# tak, to przypisujemy 1, i jeśli to wyjdzie większe od 0 (czyli jeden) to zliczamy x(d,dp)
+subject to link_signalCount_constraint { l in Links }:				
+# do zmiennej l(e,x) przypisane jest suma po demandach `d`, po jego pathah `dp` to z tym k to jest chyba zapis ze dany link należy do danej ścieżki dp, jeśli 										
+# tak, to przypisujemy 1, i jeśli to wyjdzie większe od 0 (czyli jeden) to zliczamy x(d,dp)
 										# czyli de facto jest to policzenie zmiennej l(e,x)
   link_signalCount[ l ] = sum { d in Demands, dp in 1..demand_maxPath[ d ]: sum{ k in Demand_pathLinks[ d, dp ]: k = l } 1 > 0 } demandPath_signalCount[ d, dp ];
   

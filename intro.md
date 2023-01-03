@@ -162,18 +162,6 @@ AllocationtMatrix{
 }
 ```
 
-```go
-AllocationtMatrix{
-    																					                 
-    Node 1: {1, }, {2, } {3, 3}  // wyk: 6cpu, 48ram      limit: 8cpu 64ram       
-    Node 2: {1, }, {2, } {3, }  //  wyk:       limit: 4cpu, 64ram     
-    Node 3: {1, }, {2,9} {3, } // wyk: 9cpu, 72ram      limit: 16cpu, 128ram   
-    Node 4: {1,2}, {2, } {3, }  // wyk: 4cpu, 12ram       limit: 8cpu, 32ram     
-}
-```
-
-
-
 ## AMPL
 
 **Konstrainty**
@@ -196,3 +184,98 @@ https://en.wikipedia.org/wiki/Assignment_problem
 https://en.wikipedia.org/wiki/Generalized_assignment_problem
 
 Slajdy Bębena 24-27.
+
+# Pierwsze działające gówno
+
+```ampl
+# --------------------------------- P A R A M E T E R S ---------------------------------
+
+param nodeCount, >= 0 integer; # liczba węzłów/nodes w DataCenter
+param servicesCount, >= 0 integer; # liczba usług 
+
+set Nodes;      # zbiór węzłów
+
+param node_cpu {Nodes}, >= 0, integer; # funkcja/tablica/mapa która zwraca CPU dla node od danym id
+param node_ram {Nodes}, >= 0, integer; # funkcja/tablica/mapa która zwraca RAM dla node od danym id
+
+set ContainerImages;
+
+param containerImage_cpu {ContainerImages}, >= 0, integer; #mapa która zwraca CPU dla danego containerImage
+param containerImage_ram {ContainerImages}, >= 0, integer; #mapa która zwraca RAM dla danego containerImage
+param containerImage_sau {ContainerImages}, >= 0, integer; #mapa która zwraca SAU dla danego containerImage
+
+set InterestMatrix;
+
+param service_SAU {InterestMatrix} >= 0, integer; #mapa która zwraca SAU dla danej usług
+
+# --------------------------------- V A R I A B L E S ---------------------------------
+
+# rozwiązanie; dla każdego node ile jest odpalonych intancji kontenerów dla każdej usługi
+var AllocationMatrix{ n in Nodes, 1..servicesCount }, >=0, integer;
+# np. AllocationMatrix[1][2] = 4 na node1 dla service2 mamy 4 instancje
+
+
+# -------------------------------- S U B J E C T   T O --------------------------------
+
+# constraint na to, żeby pokryć zainteresowanie usługami
+subject to sau_satisfaction_constraint { s in InterestMatrix }:		
+  sum { n in 1..nodeCount } AllocationMatrix[ n, s ] * containerImage_sau[s] >= service_SAU[ s ];
+
+# constraint na to, żeby na żadnym węźle nie przekroczyć CPU
+subject to node_cpu_limit { n in Nodes }:	
+   sum { s in 1..servicesCount} AllocationMatrix[n, s] * containerImage_cpu[s] <= node_cpu[n];
+
+# constraint na to, żeby na żadnym węźle nie przekroczyć RAM
+subject to node_ram_limit { n in Nodes }:	
+   sum { s in 1..servicesCount} AllocationMatrix[n, s] * containerImage_ram[s] <= node_ram[n];
+
+# -------------------------------- M I N I M I Z E --------------------------------
+minimize cpu_usage:
+   sum {n in Nodes} (AllocationMatrix[n,1]*containerImage_cpu[1] + AllocationMatrix[n,2]*containerImage_cpu[2] + AllocationMatrix[n,3]*containerImage_cpu[3]);
+
+problem gap:
+   cpu_usage,
+
+   AllocationMatrix, sau_satisfaction_constraint, node_cpu_limit, node_ram_limit
+;
+```
+
+Sekcja MINIMIZE jest taka po prostu, żeby było cokolwiek. Tu minimalizacja użycia CPU, czyli zwykłe rozmieszczenie tbh. Trzeba ją podmienić na odpowiednią zmienną do minimalizacji.
+
+Drugi mankament to zhardokodowanie i założenie, że usług jest 3.
+
+Wyszło nam takie o:
+
+![](img/2.png)
+
+Co się totalnie zgadza z wcześniej kminionym przykładem.
+
+Też jak widać constrainty zostały zachowane, żaden węzeł nie jest przeciążony oraz zapotrzebowania na SAU są spełnione.
+
+```go
+AllocationtMatrix{
+Node 1: {1, }, {2, } {3, 3}  // wyk: 6cpu, 48ram      limit: 8cpu 64ram       
+Node 2: {1, }, {2, } {3, }  //  wyk:       limit: 4cpu, 64ram     
+Node 3: {1, }, {2,9} {3, } // wyk: 9cpu, 72ram      limit: 16cpu, 128ram   
+Node 4: {1,2}, {2, } {3, }  // wyk: 4cpu, 12ram       limit: 8cpu, 32ram   
+}
+```
+## Drugie podejście
+
+```go
+mean - średnie procentowe wykorzystanie node'ów
+var x = Math.Max(Zbiór{dla każdego węzła `i` : |mean - obiążenie(i)|}).
+```
+
+### Max value
+
+Jak masz zbiór W to znalezienie w nim max wartości to
+
+```ampl
+max {i in W} i
+```
+
+```go
+// obiążenia RAM węzłów
+```
+
