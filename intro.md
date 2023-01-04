@@ -104,8 +104,6 @@ type AllocationtMatrix struct {
 
 ### Przykład
 
-//TODO Wymyśl przykład, opisz słownie, potem zasymuluj algorytm i to wszystko zrzuytuj na model.
-
 **INPUT**
 
 Mamy centrum danych i w nim 4 węzły.
@@ -279,3 +277,29 @@ max {i in W} i
 // obiążenia RAM węzłów
 ```
 
+### Policzenie zmiennej do minimalizacji
+
+```go
+node_cpu_capacity[n] // mówi ile maksymalnie cpu można użyć na węźle o numerze `n`
+node_ram_capacity[n] // _||_                 ram           _||_
+
+// PO PIERWSZE LICZYMY ŚREDNIO OBCIĄŻENIE KAŻDEGO WĘZŁA
+node_cpu_used[n] = Sum(s in 1..serviceCount) AllocationMatrix[n,s] * containerImage_cpu[s] // ile cpu na węźle o numerze `n`
+node_cpu_load[n] = node_cpu_used[n]/node_cpu_capacity[n] //to wychodzi 0..1 wartość, procentowe wykorzystanie CPU
+// teraz dla ram
+node_ram_used[n] = Sum(s in 1..serviceCount) AllocationMatrix[n,s] * containerImage_ram[s] // ile ram zużyto
+node_ram_load[n] = node_ram_used[n]/node_ram_capacity[n] //to wychodzi 0..1 wartość, procentowe wykorzystanie RAM
+// uśredniamy RAM i CPU
+node_load[n] = (node_ram_load + node_cpu_load)/2
+
+// średnie obciążenie węzła w data center, które będziemy traktować jako punkt odniesienia
+node_mean_load = (Sum(n in 1..nodeCount) node_load[n])/nodeCount
+
+// zbiór z którego max będziemy minimalizować
+zbiór = {Dla n in 1..nodeCount: x[n] = Math.abs(node_load[n] - node_mean_load)}
+
+// zmienna do optymalizacji
+zmienna = Math.Max(zbiór)
+```
+
+No i teraz trzeba to przenieść na AMPL ....

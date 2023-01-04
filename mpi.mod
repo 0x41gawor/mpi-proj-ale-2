@@ -5,8 +5,8 @@ param servicesCount, >= 0 integer; # liczba usług
 
 set Nodes;      # zbiór węzłów
 
-param node_cpu {Nodes}, >= 0, integer; # funkcja/tablica/mapa która zwraca CPU dla node od danym id
-param node_ram {Nodes}, >= 0, integer; # funkcja/tablica/mapa która zwraca RAM dla node od danym id
+param node_cpu_capacity {Nodes}, >= 0, integer; # funkcja/tablica/mapa która zwraca CPU dla node od danym id
+param node_ram_capacity {Nodes}, >= 0, integer; # funkcja/tablica/mapa która zwraca RAM dla node od danym id
 
 set ContainerImages;
 
@@ -33,11 +33,11 @@ subject to sau_satisfaction_constraint { s in InterestMatrix }:
 
 # constraint na to, żeby na żadnym węźle nie przekroczyć CPU
 subject to node_cpu_limit { n in Nodes }:	
-   sum { s in 1..servicesCount} AllocationMatrix[n, s] * containerImage_cpu[s] <= node_cpu[n];
+   sum { s in 1..servicesCount} AllocationMatrix[n, s] * containerImage_cpu[s] <= node_cpu_capacity[n];
 
 # constraint na to, żeby na żadnym węźle nie przekroczyć RAM
 subject to node_ram_limit { n in Nodes }:	
-   sum { s in 1..servicesCount} AllocationMatrix[n, s] * containerImage_ram[s] <= node_ram[n];
+   sum { s in 1..servicesCount} AllocationMatrix[n, s] * containerImage_ram[s] <= node_ram_capacity[n];
 
 # -------------------------------- M I N I M I Z E --------------------------------
 minimize cpu_usage:
