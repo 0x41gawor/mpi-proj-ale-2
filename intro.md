@@ -183,7 +183,7 @@ https://en.wikipedia.org/wiki/Generalized_assignment_problem
 
 Slajdy Bębena 24-27.
 
-# Pierwsze działające gówno
+# Prototyp
 
 ```ampl
 # --------------------------------- P A R A M E T E R S ---------------------------------
