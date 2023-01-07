@@ -181,7 +181,7 @@ https://en.wikipedia.org/wiki/Assignment_problem
 
 https://en.wikipedia.org/wiki/Generalized_assignment_problem
 
-Slajdy Bębena 24-27.
+Slajdy Wykładowe 24-27.
 
 # Prototyp
 
